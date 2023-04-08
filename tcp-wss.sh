@@ -71,7 +71,7 @@ http {
         listen 443 ssl http2;
         listen [::]:443 ssl http2;
         server_name $domain;
-        ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
+        ssl_protocols TLSv1.3;
         ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
         ssl_prefer_server_ciphers on;
         ssl_certificate /etc/letsencrypt/live/$domain/fullchain.pem;
@@ -99,10 +99,10 @@ acme_ssl(){
     ~/.acme.sh/acme.sh --issue -d $domain --standalone --keylength ec-256 --pre-hook "systemctl stop nginx" --post-hook "~/.acme.sh/acme.sh --installcert -d $domain --ecc --fullchain-file /etc/letsencrypt/live/$domain/fullchain.pem --key-file /etc/letsencrypt/live/$domain/privkey.pem --reloadcmd \"systemctl restart nginx\""
 }
 
-install_v2ray(){    
-    bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
+install_xray(){    
+    bash <(curl -L https://raw.githubusercontent.com/XTLS/Xray-install/main/install-release.sh)
     
-cat >/usr/local/etc/v2ray/config.json<<EOF
+cat >/usr/local/etc/xray/config.json<<EOF
 {
   "inbounds": [
     {
@@ -132,10 +132,10 @@ cat >/usr/local/etc/v2ray/config.json<<EOF
 }
 EOF
 
-    systemctl enable v2ray.service && systemctl restart v2ray.service
+    systemctl enable xray.service && systemctl restart xray.service
     rm -f tcp-wss.sh install-release.sh
 
-cat >/usr/local/etc/v2ray/client.json<<EOF
+cat >/usr/local/etc/xray/client.json<<EOF
 {
 ===========配置参数=============
 地址：${domain}
@@ -198,7 +198,7 @@ EOF
     clear
 }
 
-client_v2ray(){
+client_xray(){
     echo
     echo "安装已经完成"
     echo
